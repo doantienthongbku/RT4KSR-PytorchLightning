@@ -1,10 +1,8 @@
 from pathlib import Path
 import os
 import glob
-import cv2
-import functools
 from PIL import Image
-from torch.utils.data import Dataset, DataLoader
+from torch.utils.data import Dataset
 from torchvision import transforms
 from torchvision.transforms import functional as TF
 
@@ -17,7 +15,8 @@ class SRDataset(Dataset):
         scale: int = 2, 
         mode: str = "train", 
         image_format: str = "png", 
-        preupsample: bool = False
+        preupsample: bool = False,
+        jpeg_level: int = 90,
     ):
         super(SRDataset, self).__init__()
         self.image_path_list = glob.glob(images_dir + "/*." + image_format)
@@ -25,16 +24,15 @@ class SRDataset(Dataset):
         self.scale = scale
         self.mode = mode
         self.preupsample = preupsample
+        self.jpeg_level = jpeg_level
         
         if self.mode == "train":
             self.transforms = transforms.Compose([
                 transforms.RandomCrop(self.crop_size, pad_if_needed=True, padding_mode='reflect'),
-                transforms.RandomApply([
-                    functools.partial(TF.rotate, angle=0),
-                    functools.partial(TF.rotate, angle=90),
-                    functools.partial(TF.rotate, angle=180),
-                    functools.partial(TF.rotate, angle=270),
-                ]),
+                transforms.RandomRotation(
+                    degrees=100, 
+                    interpolation=Image.BICUBIC,
+                ),
                 transforms.RandomHorizontalFlip(),
                 transforms.RandomVerticalFlip(),
             ])

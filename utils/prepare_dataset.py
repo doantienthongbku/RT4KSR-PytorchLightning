@@ -1,50 +1,56 @@
 import os
-import pathlib
-import argparse
+import multiprocessing
+import shutil
+import glob
+
+import cv2
 from PIL import Image
+import numpy as np
 from tqdm import tqdm
-from torchvision.transforms.functional import center_crop
 
-def main(args):
-    
-    pathlib.Path(os.path.join(args.lr_out_dir)).mkdir(parents=True, exist_ok=True)
-    
-    if args.gt_out_dir is not None:
-        pathlib.Path(os.path.join(args.gt_out_dir)).mkdir(parents=True, exist_ok=True)
-    
-    for filename in tqdm(os.listdir(args.image_dir)):
-        # load image
-        img = Image.open(os.path.join(args.image_dir, filename)).convert('RGB')
-        img_name, ext = os.path.splitext(filename)
-              
-        # pre-crop image to DIV2K dimensions
-        img = center_crop(img, output_size=args.crop_size)
-        if args.gt_out_dir is not None:
-            img.save(os.path.join(args.gt_out_dir, f"{img_name+ext}"))
+# input variables
+IMAGE_FORMAT = 'png'
+IMAGE_SIZE = 150
+STEP_SIZE = 75
+SOURCE_DATASET_DIR = "/home/taft/SISR/DIV2K_raw/DIV2K_valid_HR"
+TARGET_DATASET_DIR = "/home/taft/SISR/DIV2K_300/valid_HR"
 
-        # check sizes
-        w, h = img.size
-        assert w % args.downsample_factor == 0
-        assert h % args.downsample_factor == 0
+
+def prepare_dataset():
+    if os.path.exists(TARGET_DATASET_DIR):
+        shutil.rmtree(TARGET_DATASET_DIR)
+    os.makedirs(TARGET_DATASET_DIR)
+    
+    list_image_path = glob.glob(SOURCE_DATASET_DIR + "/*." + IMAGE_FORMAT)
+    print("Total images: {}".format(len(list_image_path)))
+    
+    progress_bar = tqdm(total=len(list_image_path), unit="image", desc="Prepare split image")
+    pool = multiprocessing.Pool(processes=16)
+    for image_path in list_image_path:
+        pool.apply_async(split_image, args=(image_path,), callback=lambda _: progress_bar.update(1))
         
-        # bicubic downsampling
-        img = img.resize((int(w/args.downsample_factor), int(h/args.downsample_factor)), resample=Image.Resampling.BICUBIC)
-        
-        if ext == ".jpg":
-            img.save(os.path.join(args.lr_out_dir, f"{img_name}.jpg"), "JPEG", quality=100)
-        else:
-            # save to JPEG
-            img.save(os.path.join(args.lr_out_dir, f"{img_name}.jpg"), "JPEG", quality=args.jpeg_level)
+    pool.close()
+    pool.join()
+
+    progress_bar.close()
+
+
+def split_image(image_path):
+    image = cv2.imread(image_path, cv2.IMREAD_UNCHANGED)
+    image_height, image_width = image.shape[:2]
+    
+    index = 1
+    if image_height >= IMAGE_SIZE and image_width >= IMAGE_SIZE:
+        for y in range(0, image_height - IMAGE_SIZE + 1, STEP_SIZE):
+            for x in range(0, image_width - IMAGE_SIZE + 1, STEP_SIZE):
+                # crop image
+                crop_image = image[y:y + IMAGE_SIZE, x:x + IMAGE_SIZE, ...]
+                crop_image = np.ascontiguousarray(crop_image)
+                # save image
+                crop_image_path = os.path.join(TARGET_DATASET_DIR, os.path.basename(image_path)[:-4] +
+                                               "_" + str(index) + "." + IMAGE_FORMAT)
+                cv2.imwrite(crop_image_path, crop_image)
+                index += 1
 
 if __name__ == "__main__":
-    
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--image-dir", type=str)
-    parser.add_argument("--gt-out-dir", type=str, default=None)
-    parser.add_argument("--lr-out-dir", type=str)
-    parser.add_argument("--jpeg-level", type=int, default=90)
-    parser.add_argument("--downsample-factor", type=int, default=2)
-    parser.add_argument("--crop-size", type=int, default=[1080, 2040], nargs="+")
-    args = parser.parse_args()
-    
-    main(args)
+    prepare_dataset()

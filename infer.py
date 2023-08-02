@@ -3,8 +3,9 @@ import pytorch_lightning as pl
 import torch
 from torchvision.transforms import functional as TF
 from PIL import Image
-from model import LitAsConvSR
 from torchmetrics import PeakSignalNoiseRatio, StructuralSimilarityIndexMeasure
+
+from model import LitRT4KSR_Rep
 
 model_path = "weights/AsConvSR-epoch=21-val_loss=0.02-val_psnr=31.11.ckpt"
 lr_image_path = "../DIV2K_raw/DIV2K_valid_HR/0802.png"

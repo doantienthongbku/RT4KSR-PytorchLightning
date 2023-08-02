@@ -6,13 +6,11 @@ feature_channels = 32
 num_blocks = 6
 act_type = "gelu"
 is_train = True
-rgb_range = 1.0
 
 # Data configuration:
 dataroot = "../DIV2K_small"
 scale = 2
-rgb_range = 1.0
-batch_size = 2
+batch_size = 64
 num_workers = 4
 crop_size = 128
 image_format = "png"
@@ -20,7 +18,7 @@ preupsample = False
 prefetch_factor = 16
 
 # Checkpoint configuration:
-save_top_k = 2
+save_top_k = 5
 checkpoint_root = "checkpoints/"
 
 # Logging configuration (Tensorboard):
@@ -31,18 +29,18 @@ logger_name = "RT4KSR_Rep_XL"
 optimizer = "AdamW"     # ["AdamW", "Adam", "SGD"]
 
 # MultiStepLR configuration:
-multistepLR_milestones = [5, 10, 15]
+multistepLR_milestones = [20, 40, 60, 80]
 multistepLR_gamma = 0.5
 
 # lr monitor configuration:
 lr_monitor_logging_interval="step"
 
 # early stopping configuration:
-early_stopping_patience = 7
+early_stopping_patience = 10
 
 # Training configuration:
-learning_rate = 1e-4
-max_epochs = 20
+learning_rate = 1e-3
+max_epochs = 100
 accelerator = "auto"
 device = "auto"
 

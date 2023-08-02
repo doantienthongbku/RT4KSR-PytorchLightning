@@ -29,6 +29,7 @@ def main():
         mode="min",
         dirpath=config.checkpoint_root,
         filename="RT4KSRRepXL-{epoch:02d}-{val_loss:.4f}-{val_psnr:.4f}",
+        save_last=True,
     )
     lr_monitor = LearningRateMonitor(logging_interval=config.lr_monitor_logging_interval)
     tb_logger = TensorBoardLogger(
