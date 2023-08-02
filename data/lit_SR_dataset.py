@@ -3,33 +3,26 @@ from torch.utils.data import DataLoader
 from torch.utils.data import random_split
 import pytorch_lightning as pl
 import torch
+import os
 
 from .SR_dataset import SRDataset
 
 
 class SRDataModule(pl.LightningDataModule):
     def __init__(
-        self, 
-        train_dir="data/train",
-        val_dir="data/val",
-        batch_size=32,
-        num_workers=4,
-        crop_size=256, 
-        upscale_factor=2,
-        image_format="png",
-        preupsample=False,
-        prefetch_factor=16,
+        self,
+        config
     ) -> None:
         super().__init__()
-        self.train_dir = train_dir
-        self.val_dir = val_dir
-        self.batch_size = batch_size
-        self.num_workers = num_workers
-        self.crop_size = crop_size
-        self.upscale_factor = upscale_factor
-        self.image_format = image_format
-        self.preupsample = preupsample
-        self.prefetch_factor = prefetch_factor
+        self.train_dir = os.path.join(config.dataroot, "train")
+        self.val_dir = os.path.join(config.dataroot, "val")
+        self.batch_size = config.batch_size
+        self.num_workers = config.num_workers
+        self.crop_size = config.crop_size
+        self.scale = config.scale
+        self.image_format = config.image_format
+        self.preupsample = config.preupsample
+        self.prefetch_factor = config.prefetch_factor
         
         self.dataloader_kwargs = {
             "batch_size": self.batch_size,
@@ -42,7 +35,7 @@ class SRDataModule(pl.LightningDataModule):
         self.train_ds = SRDataset(
             images_dir=self.train_dir,
             crop_size=self.crop_size,
-            upscale_factor=self.upscale_factor,
+            scale=self.scale,
             mode="train",
             image_format=self.image_format,
             preupsample=self.preupsample
@@ -50,7 +43,7 @@ class SRDataModule(pl.LightningDataModule):
         self.valid_ds = SRDataset(
             images_dir=self.val_dir,
             crop_size=self.crop_size,
-            upscale_factor=self.upscale_factor,
+            scale=self.scale,
             mode="valid",
             image_format=self.image_format,
             preupsample=self.preupsample
@@ -63,7 +56,7 @@ class SRDataModule(pl.LightningDataModule):
         print("============================================================")
     
     def train_dataloader(self):
-        return DataLoader(self.train_ds, shuffle=True,**self.dataloader_kwargs)
+        return DataLoader(self.train_ds, shuffle=True, **self.dataloader_kwargs)
     
     def val_dataloader(self):
         return DataLoader(self.valid_ds, shuffle=False, **self.dataloader_kwargs)

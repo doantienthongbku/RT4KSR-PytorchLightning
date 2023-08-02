@@ -3,7 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torchvision
 
-from model.modules import *
+from .modules import *
 
 
 ####################################
@@ -104,3 +104,22 @@ def rt4ksr_rep(config):
                        layernorm=True,
                        residual=False)
     return model
+
+
+if __name__=='__main__':
+    # init sample config to test model
+    class Config:
+        def __init__(self):
+            self.feature_channels = 32
+            self.num_blocks = 6
+            self.act_type = "gelu"
+            self.is_train = False
+            self.scale = 2
+    config = Config()
+
+    from torchsummary import summary
+    
+    model = rt4ksr_rep(config)
+    summary(model, (3, 128, 128), device='cpu')
+    out = model(torch.randn(1, 3, 128, 128))
+    print("Output shape:",out.shape)

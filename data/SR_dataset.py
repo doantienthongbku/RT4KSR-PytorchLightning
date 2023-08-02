@@ -12,9 +12,9 @@ from torchvision.transforms import functional as TF
 class SRDataset(Dataset):
     def __init__(
         self,
-        images_dir: str = "./datasets",
-        crop_size: int = 96,
-        upscale_factor: int = 2, 
+        images_dir: str = "./datasets/train",
+        crop_size: int = 128,
+        scale: int = 2, 
         mode: str = "train", 
         image_format: str = "png", 
         preupsample: bool = False
@@ -22,7 +22,7 @@ class SRDataset(Dataset):
         super(SRDataset, self).__init__()
         self.image_path_list = glob.glob(images_dir + "/*." + image_format)
         self.crop_size = crop_size
-        self.upscale_factor = upscale_factor
+        self.scale = scale
         self.mode = mode
         self.preupsample = preupsample
         
@@ -51,7 +51,7 @@ class SRDataset(Dataset):
     def __getitem__(self, index: int):
         image = Image.open(self.image_path_list[index]).convert('RGB')
         image_hr = self.transforms(image)
-        down_size = [l // self.upscale_factor for l in image_hr.size[::-1]]
+        down_size = [l // self.scale for l in image_hr.size[::-1]]
         image_lr = TF.resize(image_hr, down_size, interpolation=Image.BICUBIC)
         
         if self.preupsample:

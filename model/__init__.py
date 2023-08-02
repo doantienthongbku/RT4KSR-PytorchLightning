@@ -1,1 +1,1 @@
-from model.arch import *
+from .lit_model import LitRT4KSR_Rep

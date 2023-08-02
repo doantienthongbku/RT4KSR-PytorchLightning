@@ -10,19 +10,18 @@ import torchvision
 from torchmetrics import MaxMetric, MeanMetric
 from torchmetrics import PeakSignalNoiseRatio, StructuralSimilarityIndexMeasure
 
-from .arch import RT4KSR_Rep
+from .arch import rt4ksr_rep
 
 
-class LitAsConvSR(pl.LightningModule):
+class LitRT4KSR_Rep(pl.LightningModule):
     def __init__(
         self, 
-        learning_rate=1e-3, 
-        scale_factor=2, 
-        device=torch.device('cpu')
+        config
     ):
         super().__init__()
-        self.lr = learning_rate
-        self.model = RT4KSR_Rep(scale_factor=scale_factor, device=device)
+        self.config = config
+        self.lr = config.learning_rate
+        self.model = rt4ksr_rep(config=config)
 
         self.l1_loss_fn = nn.L1Loss()
         
@@ -90,20 +89,35 @@ class LitAsConvSR(pl.LightningModule):
         psnr = self.val_psnr(image_sr, image_hr)
         ssim = self.val_ssim(image_sr, image_hr)
         
-        return loss
+        self.log("test_loss", loss, on_step=False, on_epoch=True, prog_bar=True)
+        self.log("test_psnr", psnr, on_step=False, on_epoch=True, prog_bar=True)
+        self.log("test_ssim", ssim, on_step=False, on_epoch=True, prog_bar=True)
+        
+        return {"loss": loss, "psnr": psnr, "ssim": ssim}
     
     def predict_step(self, image_lr):
         image_sr = self.forward(image_lr)
         return {'image_lr': image_lr, 'image_sr': image_sr}
     
     def configure_optimizers(self):
-        optimizer = torch.optim.AdamW(self.parameters(), lr=self.lr, weight_decay=1e-5, 
-                                      betas=(0.9, 0.9999), amsgrad=False)
-        # optimizer = torch.optim.SGD(self.parameters(), lr=0.1, momentum=0.9)
-        # scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=200*20)
+        if self.config.optimizer == "AdamW":
+            optimizer = torch.optim.AdamW(self.parameters(), lr=self.lr, weight_decay=1e-5, 
+                                          betas=(0.9, 0.9999), amsgrad=False)
+        elif self.config.optimizer == "Adam":
+            optimizer = torch.optim.Adam(self.parameters(), lr=self.lr, weight_decay=1e-5,
+                                         betas=(0.9, 0.9999), amsgrad=False)
+        elif self.config.optimizer == "SGD":
+            optimizer = torch.optim.SGD(self.parameters(), lr=0.1, momentum=0.9)
+        else:
+            raise NotImplementedError("Optimizer not implemented")
         
         # create learning rate scheduler with halved for every 200000 steps
-        scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=[25, 50, 75, 100, 125], gamma=0.5, verbose=True)
+        scheduler = torch.optim.lr_scheduler.MultiStepLR(
+            optimizer,
+            milestones=self.config.multistepLR_milestones, 
+            gamma=self.config, 
+            verbose=True
+        )
         
         return {
             "optimizer": optimizer,

@@ -3,7 +3,7 @@ import torch
 import torch.nn as nn 
 import torch.nn.functional as F
 
-from model.utils import rep_utils as utils
+from .utils import rep_utils as utils
 
 
 def activation(act_type, inplace=True, neg_slope=0.05, n_prelu=1):
