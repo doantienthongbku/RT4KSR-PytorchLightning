@@ -106,7 +106,7 @@ def rt4ksr_rep(config):
     return model
 
 
-if __name__=='__main__':
+def test1():
     # init sample config to test model
     class Config:
         def __init__(self):
@@ -123,3 +123,19 @@ if __name__=='__main__':
     summary(model, (3, 128, 128), device='cpu')
     out = model(torch.randn(1, 3, 128, 128))
     print("Output shape:",out.shape)
+
+if __name__=='__main__':
+    act = activation("gelu")
+    model = RT4KSR_Rep(num_channels=3, 
+                       num_feats=32, 
+                       num_blocks=6, 
+                       upscale=2,
+                       act=act,
+                       eca_gamma=0,
+                       forget=False,
+                       is_train=False,
+                       layernorm=True,
+                       residual=False)
+    from torchsummary import summary
+    summary(model, (3, 128, 128), device='cpu')
+    

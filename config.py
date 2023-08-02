@@ -12,7 +12,7 @@ rgb_range = 1.0
 dataroot = "../DIV2K_small"
 scale = 2
 rgb_range = 1.0
-batch_size = 32
+batch_size = 2
 num_workers = 4
 crop_size = 128
 image_format = "png"
@@ -22,7 +22,6 @@ prefetch_factor = 16
 # Checkpoint configuration:
 save_top_k = 2
 checkpoint_root = "checkpoints/"
-checkpoint_filename = "RT4KSR_Rep_XL_{epoch:02d}_{val_loss:.2f}_{val_psnr:.2f}"
 
 # Logging configuration (Tensorboard):
 logger_save_dir = "logs/"
@@ -32,11 +31,11 @@ logger_name = "RT4KSR_Rep_XL"
 optimizer = "AdamW"     # ["AdamW", "Adam", "SGD"]
 
 # MultiStepLR configuration:
-multistepLR_milestones = [25, 50, 75, 100, 125, 150]
+multistepLR_milestones = [5, 10, 15]
 multistepLR_gamma = 0.5
 
 # lr monitor configuration:
-lr_monitor_logging_interval="epoch"
+lr_monitor_logging_interval="step"
 
 # early stopping configuration:
 early_stopping_patience = 7

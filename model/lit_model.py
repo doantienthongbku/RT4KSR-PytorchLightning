@@ -5,12 +5,14 @@ import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader
 import torchvision
+from torchsummary import summary
 
 # import PSNR and SSIM metrics from torchmetrics
 from torchmetrics import MaxMetric, MeanMetric
 from torchmetrics import PeakSignalNoiseRatio, StructuralSimilarityIndexMeasure
 
-from .arch import rt4ksr_rep
+from .arch import RT4KSR_Rep
+from .modules import activation
 
 
 class LitRT4KSR_Rep(pl.LightningModule):
@@ -21,7 +23,18 @@ class LitRT4KSR_Rep(pl.LightningModule):
         super().__init__()
         self.config = config
         self.lr = config.learning_rate
-        self.model = rt4ksr_rep(config=config)
+        act = activation(config.act_type)
+        self.model = RT4KSR_Rep(num_channels=3, 
+                                num_feats=config.feature_channels, 
+                                num_blocks=config.num_blocks, 
+                                upscale=config.scale,
+                                act=act,
+                                eca_gamma=0,
+                                forget=False,
+                                is_train=config.is_train,
+                                layernorm=True,
+                                residual=False)
+        # summary(self.model, (3, 128, 128), device='cpu')
 
         self.l1_loss_fn = nn.L1Loss()
         
@@ -115,15 +128,15 @@ class LitRT4KSR_Rep(pl.LightningModule):
         scheduler = torch.optim.lr_scheduler.MultiStepLR(
             optimizer,
             milestones=self.config.multistepLR_milestones, 
-            gamma=self.config, 
-            verbose=True
+            gamma=self.config.multistepLR_gamma, 
+            verbose=False
         )
         
         return {
             "optimizer": optimizer,
             "lr_scheduler": {
                 "scheduler": scheduler,
-                "monitor": "val/loss",
+                "monitor": "val_loss",
                 "interval": "step",
                 "frequency": 1,
             },

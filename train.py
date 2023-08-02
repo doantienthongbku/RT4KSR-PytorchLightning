@@ -15,14 +15,9 @@ torch.set_float32_matmul_precision("medium")    # https://pytorch.org/docs/stabl
 
 def main():
     # strategy = DeepSpeedStrategy()
-    if config.seed is not None:
-        pl.seed_everything(config.seed)
-    
-    if config.device == "auto":
-        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    else:
-        device = torch.device(config.device)
-        
+    if config.seed is not None: pl.seed_everything(config.seed)
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu") \
+        if config.device == "auto" else torch.device(config.device)
     print("Using device:", device)
     model = LitRT4KSR_Rep(config)
     dm = SRDataModule(config=config)
@@ -33,7 +28,7 @@ def main():
         monitor="val_loss",
         mode="min",
         dirpath=config.checkpoint_root,
-        filename=config.checkpoint_filename,
+        filename="RT4KSRRepXL-{epoch:02d}-{val_loss:.4f}-{val_psnr:.4f}",
     )
     lr_monitor = LearningRateMonitor(logging_interval=config.lr_monitor_logging_interval)
     tb_logger = TensorBoardLogger(
