@@ -46,7 +46,7 @@ device = "auto"
 
 # Eval configuration:
 eval_reparameterize = True
-checkpoint_path_eval = "checkpoints/last.ckpt"
+checkpoint_path_eval = "checkpoints/RT4KSRRepXL-epoch=00-val_loss=0.0228-val_psnr=30.1446.ckpt"
 eval_lr_image_dir = "../dataset_val/Set5/LRbicx2"
 eval_hr_image_dir = "../dataset_val/Set5/GTmod12"
 val_save_path = "results/val/Set5"

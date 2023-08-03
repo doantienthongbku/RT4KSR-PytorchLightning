@@ -7,3 +7,5 @@ torch_summary==1.4.5
 torchmetrics==1.0.1
 torchvision==0.15.2
 tqdm==4.65.0
+tensorboard
+matplotlib

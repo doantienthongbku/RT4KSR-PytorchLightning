@@ -9,6 +9,7 @@ from torchmetrics import PeakSignalNoiseRatio, StructuralSimilarityIndexMeasure
 
 from utils import reparameterize
 from model import LitRT4KSR_Rep
+from utils import calculate_psnr, calculate_ssim, tensor2uint
 import config
 
 model_path = config.checkpoint_path_eval
@@ -33,7 +34,7 @@ def main():
     list_lr_image_path = glob.glob(os.path.join(lr_image_dir, "*.png"))
     list_hr_image_path = glob.glob(os.path.join(hr_image_dir, "*.png"))
     
-    psnr_lst, ssim_lst = [], []
+    psnr_RGB_lst, ssim_RGB_lst, psnr_Y_lst, ssim_Y_lst = [], [], [], []
     
     for lr_image_path, hr_image_path in zip(list_lr_image_path, list_hr_image_path):
         image_name = os.path.basename(lr_image_path)
@@ -44,23 +45,33 @@ def main():
         hr_sample = TF.to_tensor(hr_image).unsqueeze(0).to(device)
     
         with torch.no_grad():
-            image_sr = litmodel.predict_step(lr_sample)
+            sr_sample = litmodel.predict_step(lr_sample)
             
-        psnr = PeakSignalNoiseRatio()(image_sr, hr_sample)
-        ssim = StructuralSimilarityIndexMeasure()(image_sr, hr_sample)
-        print(f"Image: {image_name}, PSNR: {psnr:.6f}, SSIM: {ssim:.6f}")
-        psnr_lst.append(psnr)
-        ssim_lst.append(ssim)
+        sr_image = sr_sample * 255.
+        sr_image = tensor2uint(sr_image)
+        hr_sample *= 255.
+        hr_sample = tensor2uint(hr_sample)
             
-        image_sr = image_sr.squeeze(0).cpu()
-        image_sr = TF.to_pil_image(image_sr)
+        psnr_RGB = calculate_psnr(sr_image, hr_sample, crop_border=0, test_y_channel=False)
+        ssim_RGB = calculate_ssim(sr_image, hr_sample, crop_border=0, test_y_channel=False)
+        psnr_Y = calculate_psnr(sr_image, hr_sample, crop_border=0, test_y_channel=True)
+        ssim_Y = calculate_ssim(sr_image, hr_sample, crop_border=0, test_y_channel=True)
+        psnr_RGB_lst.append(psnr_RGB)
+        ssim_RGB_lst.append(ssim_RGB)
+        psnr_Y_lst.append(psnr_Y)
+        ssim_Y_lst.append(ssim_Y)
+            
+        image_sr_PIL = sr_sample.squeeze(0).cpu()
+        image_sr_PIL = TF.to_pil_image(image_sr_PIL)
 
         if not os.path.exists(save_path):
             os.makedirs(save_path)
-        image_sr.save(os.path.join(save_path, image_name))
+        image_sr_PIL.save(os.path.join(save_path, image_name))
         
-    print("Average PSNR:", sum(psnr_lst) / len(psnr_lst))
-    print("Average SSIM:", sum(ssim_lst) / len(ssim_lst))
+    print("Average PSNR (RGB):", sum(psnr_RGB_lst) / len(psnr_RGB_lst))
+    print("Average PSNR (Y)  :", sum(psnr_Y_lst) / len(psnr_Y_lst))
+    print("Average SSIM (RGB):", sum(ssim_RGB_lst) / len(ssim_RGB_lst))
+    print("Average SSIM (Y)  :", sum(ssim_Y_lst) / len(ssim_Y_lst))
     
 if __name__ == "__main__":
     main()
