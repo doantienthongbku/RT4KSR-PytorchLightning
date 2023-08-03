@@ -2,4 +2,5 @@ env/
 __pycache__/
 .*/
 logs/
+results/
 *.ckpt
