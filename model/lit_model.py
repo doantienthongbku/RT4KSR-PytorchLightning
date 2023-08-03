@@ -11,8 +11,7 @@ from torchsummary import summary
 from torchmetrics import MaxMetric, MeanMetric
 from torchmetrics import PeakSignalNoiseRatio, StructuralSimilarityIndexMeasure
 
-from .arch import RT4KSR_Rep
-from .modules import activation
+from .arch import rt4ksr_rep
 
 
 class LitRT4KSR_Rep(pl.LightningModule):
@@ -23,17 +22,7 @@ class LitRT4KSR_Rep(pl.LightningModule):
         super().__init__()
         self.config = config
         self.lr = config.learning_rate
-        act = activation(config.act_type)
-        self.model = RT4KSR_Rep(num_channels=3, 
-                                num_feats=config.feature_channels, 
-                                num_blocks=config.num_blocks, 
-                                upscale=config.scale,
-                                act=act,
-                                eca_gamma=0,
-                                forget=False,
-                                is_train=config.is_train,
-                                layernorm=True,
-                                residual=False)
+        self.model = rt4ksr_rep(config)
         # summary(self.model, (3, 128, 128), device='cpu')
 
         self.l1_loss_fn = nn.L1Loss()
@@ -45,13 +34,10 @@ class LitRT4KSR_Rep(pl.LightningModule):
         self.val_ssim = StructuralSimilarityIndexMeasure()
         self.train_loss = MeanMetric()
         self.val_loss = MeanMetric()
-        self.val_psnr_best = MaxMetric()
+        # self.val_psnr_best = MaxMetric()
         
     def forward(self, x):
         return self.model(x)
-    
-    def on_train_start(self):
-        self.val_psnr_best.reset()
     
     def training_step(self, batch, batch_idx):
         image_lr, image_hr = batch['lr'], batch['hr']
@@ -91,10 +77,6 @@ class LitRT4KSR_Rep(pl.LightningModule):
         
         return {"loss": loss, "psnr": psnr, "ssim": ssim}
     
-    def on_validation_epoch_end(self) -> None:
-        self.val_psnr_best(self.val_psnr.compute())
-        self.log("val_psnr_best", self.val_psnr_best, on_step=False, on_epoch=True, prog_bar=True)
-    
     def test_step(self, batch, batch_idx):
         image_lr, image_hr = batch['lr'], batch['hr']
         image_sr = self.forward(image_lr)
@@ -110,7 +92,7 @@ class LitRT4KSR_Rep(pl.LightningModule):
     
     def predict_step(self, image_lr):
         image_sr = self.forward(image_lr)
-        return {'image_lr': image_lr, 'image_sr': image_sr}
+        return image_sr
     
     def configure_optimizers(self):
         if self.config.optimizer == "AdamW":

@@ -45,10 +45,14 @@ accelerator = "auto"
 device = "auto"
 
 # Eval configuration:
-benchmark = ["dataset_val/Set5", "dataset_val/Set14"]
-rep = True
-checkpoint_path_eval = "rt4ksr_x2.ckpt"
+eval_reparameterize = True
+checkpoint_path_eval = "checkpoints/last.ckpt"
+eval_lr_image_dir = "../dataset_val/Set5/LRbicx2"
+eval_hr_image_dir = "../dataset_val/Set5/GTmod12"
+val_save_path = "results/val/Set5"
 
 # Inference configuration:
-checkpoint_path_infer = "rt4ksr_x2.ckpt"
-save_path = "results"
+infer_reparameterize = True
+checkpoint_path_infer = "checkpoints/last.ckpt"
+infer_lr_image_path = "../dataset_val/Set5/LRbicx2/butterfly.png"
+infer_save_path = "results/infer"
