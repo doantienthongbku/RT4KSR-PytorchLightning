@@ -46,13 +46,13 @@ device = "auto"
 
 # Eval configuration:
 eval_reparameterize = True
-checkpoint_path_eval = "checkpoints/RT4KSRRepXL-epoch=00-val_loss=0.0228-val_psnr=30.1446.ckpt"
-eval_lr_image_dir = "../dataset_val/Set5/LRbicx2"
-eval_hr_image_dir = "../dataset_val/Set5/GTmod12"
-val_save_path = "results/val/Set5"
+checkpoint_path_eval = "checkpoints/RT4KSRRepXL-epoch=44-val_loss=0.0167-val_psnr=31.9491.ckpt"
+eval_lr_image_dir = "../dataset_val/Set14/LRbicx2"
+eval_hr_image_dir = "../dataset_val/Set14/GTmod12"
+val_save_path = "results/val/Set14"
 
 # Inference configuration:
 infer_reparameterize = True
-checkpoint_path_infer = "checkpoints/last.ckpt"
+checkpoint_path_infer = "checkpoints/RT4KSRRepXL-epoch=44-val_loss=0.0167-val_psnr=31.9491.ckpt"
 infer_lr_image_path = "../dataset_val/Set5/LRbicx2/butterfly.png"
 infer_save_path = "results/infer"

@@ -41,5 +41,7 @@ def main():
         os.makedirs(save_path)
     image_sr.save(os.path.join(save_path, image_name))
     
+    print("Inference done.")
+    
 if __name__ == "__main__":
     main()
