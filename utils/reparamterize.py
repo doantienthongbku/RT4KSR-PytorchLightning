@@ -14,11 +14,13 @@ def reparameterize(config, net, device, save_rep_checkpoint=False):
             k0 = pretrained_state_dict[k.replace("rep", "expand")]
             k1 = pretrained_state_dict[k.replace("rep", "fea")]
             k2 = pretrained_state_dict[k.replace("rep", "reduce")]
+            k0, k1, k2 = k0.to(device), k1.to(device), k2.to(device)
             
             bias_str = k.replace("weight", "bias")
             b0 = pretrained_state_dict[bias_str.replace("rep", "expand")]
             b1 = pretrained_state_dict[bias_str.replace("rep", "fea")]
             b2 = pretrained_state_dict[bias_str.replace("rep", "reduce")]
+            b0, b1, b2 = b0.to(device), b1.to(device), b2.to(device)
             
             mid_feats, n_feats = k0.shape[:2]
 

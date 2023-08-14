@@ -5,7 +5,7 @@ import torch
 from torchvision.transforms import functional as TF
 from PIL import Image
 from torchsummary import summary
-from torchmetrics import PeakSignalNoiseRatio, StructuralSimilarityIndexMeasure
+from torchmetrics.image import PeakSignalNoiseRatio, StructuralSimilarityIndexMeasure
 
 from utils import reparameterize
 from model import LitRT4KSR_Rep
@@ -29,6 +29,7 @@ def main():
     )
     if config.eval_reparameterize:
         litmodel.model = reparameterize(config, litmodel.model, device, save_rep_checkpoint=False)
+    litmodel.model.to(device)
     litmodel.eval()
     
     list_lr_image_path = glob.glob(os.path.join(lr_image_dir, "*.png"))

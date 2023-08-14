@@ -9,7 +9,7 @@ from torchsummary import summary
 
 # import PSNR and SSIM metrics from torchmetrics
 from torchmetrics import MaxMetric, MeanMetric
-from torchmetrics import PeakSignalNoiseRatio, StructuralSimilarityIndexMeasure
+from torchmetrics.image import PeakSignalNoiseRatio, StructuralSimilarityIndexMeasure
 
 from .arch import rt4ksr_rep
 

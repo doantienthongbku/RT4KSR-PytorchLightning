@@ -3,7 +3,7 @@ import pytorch_lightning as pl
 import torch
 from torchvision.transforms import functional as TF
 from PIL import Image
-from torchmetrics import PeakSignalNoiseRatio, StructuralSimilarityIndexMeasure
+from torchmetrics.image import PeakSignalNoiseRatio, StructuralSimilarityIndexMeasure
 
 from model import LitRT4KSR_Rep
 from utils import reparameterize
@@ -25,6 +25,7 @@ def main():
     )
     if config.infer_reparameterize:
         litmodel.model = reparameterize(config, litmodel.model, device, save_rep_checkpoint=False)
+    litmodel.model.to(device)
     litmodel.eval()
     
     image_name = os.path.basename(lr_image_path)

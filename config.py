@@ -53,6 +53,6 @@ val_save_path = "results/val/Set14"
 
 # Inference configuration:
 infer_reparameterize = True
-checkpoint_path_infer = "checkpoints/RT4KSRRepXL-epoch=44-val_loss=0.0167-val_psnr=31.9491.ckpt"
-infer_lr_image_path = "../dataset_val/Set5/LRbicx2/butterfly.png"
+checkpoint_path_infer = "checkpoints/new/RT4KSRRepXL-epoch=99-val_loss=0.0151-val_psnr=32.8121.ckpt"
+infer_lr_image_path = "examples/butterfly.png"
 infer_save_path = "results/infer"
