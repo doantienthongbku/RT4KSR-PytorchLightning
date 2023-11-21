@@ -6,4 +6,4 @@ tqdm==4.65.0
 tensorboard
 matplotlib
 gradio
-typing_extensions==4.7.1
+typing_extensions

@@ -8,7 +8,7 @@ from torchsummary import summary
 from torchmetrics.image import PeakSignalNoiseRatio, StructuralSimilarityIndexMeasure
 
 from utils import reparameterize
-from model import LitRT4KSR_Rep
+from model import LitRT4KSR_Rep, rt4ksr_rep
 from utils import calculate_psnr, calculate_ssim, tensor2uint
 import config
 
@@ -44,7 +44,7 @@ def main():
         lr_sample = TF.to_tensor(lr_image).unsqueeze(0).to(device)
         hr_image = Image.open(hr_image_path).convert("RGB")
         hr_sample = TF.to_tensor(hr_image).unsqueeze(0).to(device)
-    
+
         with torch.no_grad():
             sr_sample = litmodel.predict_step(lr_sample)
             

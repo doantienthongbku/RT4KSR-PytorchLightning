@@ -47,7 +47,8 @@ def main():
         logger=tb_logger,
         callbacks=[checkpoint_callback, lr_monitor, early_stopping],
     )
-
+    # print(dm.train_dataloader())
+    
     trainer.fit(model, dm)
     trainer.validate(model, dm)
 

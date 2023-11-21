@@ -23,6 +23,7 @@ class SRDataModule(pl.LightningDataModule):
         self.image_format = config.image_format
         self.preupsample = config.preupsample
         self.prefetch_factor = config.prefetch_factor
+        self.rgb_range = config.rgb_range
         
         self.dataloader_kwargs = {
             "batch_size": self.batch_size,
@@ -38,7 +39,8 @@ class SRDataModule(pl.LightningDataModule):
             scale=self.scale,
             mode="train",
             image_format=self.image_format,
-            preupsample=self.preupsample
+            preupsample=self.preupsample,
+            rgb_range=self.rgb_range
         )
         self.valid_ds = SRDataset(
             images_dir=self.val_dir,
@@ -46,7 +48,8 @@ class SRDataModule(pl.LightningDataModule):
             scale=self.scale,
             mode="valid",
             image_format=self.image_format,
-            preupsample=self.preupsample
+            preupsample=self.preupsample,
+            rgb_range=self.rgb_range
         )
         
         # print information of dataset

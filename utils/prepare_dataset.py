@@ -10,10 +10,10 @@ from tqdm import tqdm
 
 # input variables
 IMAGE_FORMAT = 'png'
-IMAGE_SIZE = 150
-STEP_SIZE = 75
-SOURCE_DATASET_DIR = "/home/taft/SISR/DIV2K_raw/DIV2K_valid_HR"
-TARGET_DATASET_DIR = "/home/taft/SISR/DIV2K_300/valid_HR"
+IMAGE_SIZE = 300
+STEP_SIZE = 150
+SOURCE_DATASET_DIR = "/home/graduation_thesis/dataset_raw/DIV2K_valid_HR"
+TARGET_DATASET_DIR = "/home/graduation_thesis/dataset/valid"
 
 
 def prepare_dataset():
