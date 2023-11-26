@@ -5,6 +5,7 @@ import torch
 from torchvision.transforms import functional as TF
 from PIL import Image
 import numpy as np
+from tqdm import tqdm
 from torchsummary import summary
 from torchmetrics.image import PeakSignalNoiseRatio, StructuralSimilarityIndexMeasure
 
@@ -38,7 +39,7 @@ def main():
     
     psnr_RGB_lst, ssim_RGB_lst, psnr_Y_lst, ssim_Y_lst = [], [], [], []
     
-    for lr_image_path, hr_image_path in zip(list_lr_image_path, list_hr_image_path):
+    for lr_image_path, hr_image_path in tqdm(zip(list_lr_image_path, list_hr_image_path)):
         image_name = os.path.basename(lr_image_path)
 
         lr_image = Image.open(lr_image_path).convert("RGB")

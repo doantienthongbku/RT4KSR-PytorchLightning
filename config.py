@@ -47,13 +47,20 @@ device = "auto"
 
 # Eval configuration:
 eval_reparameterize = True
-checkpoint_path_eval = "/home/graduation_thesis/Experiments/v1/checkpoints/RT4KSRRepXL-epoch=54-val_loss=0.0161-val_psnr=30.4819.ckpt"
-eval_lr_image_dir = "../dataset_val/Set5/LRbicx2"
-eval_hr_image_dir = "../dataset_val/Set5/GTmod12"
-val_save_path = "results/val/Set5"
+checkpoint_path_eval = "/home/graduation_thesis/Experiments/v2/checkpoints/RT4KSRRep-epoch=41-val_loss=0.0159-val_psnr=30.3617.ckpt"
+eval_lr_image_dir = "../dataset_val/Set14/LRbicx2"
+eval_hr_image_dir = "../dataset_val/Set14/GTmod12"
+val_save_path = "results/val/Set14"
 
 # Inference configuration:
 infer_reparameterize = True
-checkpoint_path_infer = "checkpoints/RT4KSRRepXL-epoch=99-val_loss=0.0151-val_psnr=32.8121.ckpt"
+checkpoint_path_infer = "/home/graduation_thesis/Experiments/v2/checkpoints/RT4KSRRep-epoch=35-val_loss=0.0164-val_psnr=30.2801.ckpt"
 infer_lr_image_path = "examples/butterfly.png"
 infer_save_path = "results/infer"
+
+# Video inference configuration:
+video_infer_reparameterize = True
+checkpoint_path_video_infer = "/home/graduation_thesis/Experiments/v2/checkpoints/RT4KSRRep-epoch=35-val_loss=0.0164-val_psnr=30.2801.ckpt"
+video_infer_video_path = "/home/graduation_thesis/videos/Rainforest_720.mp4"
+video_infer_save_path = "results/video"
+video_format = ".mp4"

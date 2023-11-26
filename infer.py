@@ -3,10 +3,11 @@ import pytorch_lightning as pl
 import torch
 from torchvision.transforms import functional as TF
 from PIL import Image
+import numpy as np
 from torchmetrics.image import PeakSignalNoiseRatio, StructuralSimilarityIndexMeasure
 
 from model import LitRT4KSR_Rep
-from utils import reparameterize
+from utils import reparameterize, tensor2uint
 import config
 
 model_path = config.checkpoint_path_infer
@@ -30,17 +31,17 @@ def main():
     
     image_name = os.path.basename(lr_image_path)
     lr_image = Image.open(lr_image_path).convert("RGB")
-    lr_sample = TF.to_tensor(lr_image).unsqueeze(0).to(device)
+    lr_sample = TF.to_tensor(np.array(lr_image) / 255.0).unsqueeze(0).float().to(device)
     
     with torch.no_grad():
-        image_sr = litmodel.predict_step(lr_sample)
+        sr_sample = litmodel.predict_step(lr_sample)
 
-    image_sr = image_sr.squeeze(0).cpu()
-    image_sr = TF.to_pil_image(image_sr)
+    sr_sample = tensor2uint(sr_sample * 255.0)
+    image_sr_PIL = Image.fromarray(sr_sample)
     
     if not os.path.exists(save_path):
         os.makedirs(save_path)
-    image_sr.save(os.path.join(save_path, image_name))
+    image_sr_PIL.save(os.path.join(save_path, image_name))
     
     print("Inference done.")
     

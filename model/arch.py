@@ -9,8 +9,8 @@ from .modules import *
 ####################################
 # DEFINE MODEL INSTANCES
 ####################################
-    
-   
+
+
 class RT4KSR_Rep(nn.Module):
     def __init__(self,
                  num_channels, 
