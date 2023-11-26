@@ -111,7 +111,7 @@ class LitRT4KSR_Rep(pl.LightningModule):
             optimizer,
             milestones=self.config.multistepLR_milestones, 
             gamma=self.config.multistepLR_gamma, 
-            verbose=False
+            verbose=False,
         )
         
         return {
@@ -119,7 +119,7 @@ class LitRT4KSR_Rep(pl.LightningModule):
             "lr_scheduler": {
                 "scheduler": scheduler,
                 "monitor": "val_loss",
-                "interval": "step",
+                "interval": self.config.lr_monitor_logging_interval,
                 "frequency": 1,
             },
         }

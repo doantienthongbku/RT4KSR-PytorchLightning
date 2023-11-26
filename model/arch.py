@@ -61,7 +61,7 @@ class RT4KSR_Rep(nn.Module):
             nn.Conv2d(num_feats, num_channels * ((2 * upscale) ** 2), 3, padding=1),
             nn.PixelShuffle(upscale*2)            
         )
-        
+    
     def forward(self, x):
         # stage 1
         hf = x - self.gaussian(x)

@@ -4,6 +4,7 @@ import pytorch_lightning as pl
 import torch
 from torchvision.transforms import functional as TF
 from PIL import Image
+import numpy as np
 from torchsummary import summary
 from torchmetrics.image import PeakSignalNoiseRatio, StructuralSimilarityIndexMeasure
 
@@ -39,32 +40,29 @@ def main():
     
     for lr_image_path, hr_image_path in zip(list_lr_image_path, list_hr_image_path):
         image_name = os.path.basename(lr_image_path)
-        
+
         lr_image = Image.open(lr_image_path).convert("RGB")
-        lr_sample = TF.to_tensor(lr_image).unsqueeze(0).to(device)
         hr_image = Image.open(hr_image_path).convert("RGB")
-        hr_sample = TF.to_tensor(hr_image).unsqueeze(0).to(device)
+        lr_sample = TF.to_tensor(np.array(lr_image) / 255.0).unsqueeze(0).float().to(device)
+        hr_sample = TF.to_tensor(np.array(hr_image) / 255.0).unsqueeze(0).float().to(device)
 
         with torch.no_grad():
             sr_sample = litmodel.predict_step(lr_sample)
-            
-        sr_image = sr_sample * 255.
-        sr_image = tensor2uint(sr_image)
-        hr_sample *= 255.
-        hr_sample = tensor2uint(hr_sample)
-            
-        psnr_RGB = calculate_psnr(sr_image, hr_sample, crop_border=0, test_y_channel=False)
-        ssim_RGB = calculate_ssim(sr_image, hr_sample, crop_border=0, test_y_channel=False)
-        psnr_Y = calculate_psnr(sr_image, hr_sample, crop_border=0, test_y_channel=True)
-        ssim_Y = calculate_ssim(sr_image, hr_sample, crop_border=0, test_y_channel=True)
+
+        sr_sample = tensor2uint(sr_sample * 255.0)
+        hr_sample = tensor2uint(hr_sample * 255.0)
+        
+        psnr_RGB = calculate_psnr(sr_sample, hr_sample, crop_border=0, test_y_channel=False)
+        ssim_RGB = calculate_ssim(sr_sample, hr_sample, crop_border=0, test_y_channel=False)
+        psnr_Y = calculate_psnr(sr_sample, hr_sample, crop_border=0, test_y_channel=True)
+        ssim_Y = calculate_ssim(sr_sample, hr_sample, crop_border=0, test_y_channel=True)
         psnr_RGB_lst.append(psnr_RGB)
         ssim_RGB_lst.append(ssim_RGB)
         psnr_Y_lst.append(psnr_Y)
         ssim_Y_lst.append(ssim_Y)
-            
-        image_sr_PIL = sr_sample.squeeze(0).cpu()
-        image_sr_PIL = TF.to_pil_image(image_sr_PIL)
 
+        # save image
+        image_sr_PIL = Image.fromarray(sr_sample)
         if not os.path.exists(save_path):
             os.makedirs(save_path)
         image_sr_PIL.save(os.path.join(save_path, image_name))

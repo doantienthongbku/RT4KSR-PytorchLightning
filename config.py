@@ -8,7 +8,7 @@ act_type = "gelu"
 is_train = True
 
 # Data configuration:
-dataroot = "/home/graduation_thesis/dataset"
+dataroot = "/home/graduation_thesis/dataset_small"
 scale = 2
 batch_size = 32
 num_workers = 4
@@ -30,7 +30,7 @@ logger_name = "RT4KSR_Rep"
 optimizer = "AdamW"     # ["AdamW", "Adam", "SGD"]
 
 # MultiStepLR configuration:
-multistepLR_milestones = [40, 80, 120, 160]
+multistepLR_milestones = [20, 40, 60, 80]
 multistepLR_gamma = 0.5
 
 # lr monitor configuration:
@@ -47,10 +47,10 @@ device = "auto"
 
 # Eval configuration:
 eval_reparameterize = True
-checkpoint_path_eval = "checkpoints/RT4KSRRepXL-epoch=44-val_loss=0.0167-val_psnr=31.9491.ckpt"
-eval_lr_image_dir = "../dataset_val/Set14/LRbicx2"
-eval_hr_image_dir = "../dataset_val/Set14/GTmod12"
-val_save_path = "results/val/Set14"
+checkpoint_path_eval = "/home/graduation_thesis/Experiments/v1/checkpoints/RT4KSRRepXL-epoch=54-val_loss=0.0161-val_psnr=30.4819.ckpt"
+eval_lr_image_dir = "../dataset_val/Set5/LRbicx2"
+eval_hr_image_dir = "../dataset_val/Set5/GTmod12"
+val_save_path = "results/val/Set5"
 
 # Inference configuration:
 infer_reparameterize = True
