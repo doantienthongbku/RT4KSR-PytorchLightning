@@ -17,10 +17,6 @@ TARGET_DATASET_DIR = "/home/graduation_thesis/dataset_small/train"
 
 
 def prepare_dataset():
-    if os.path.exists(TARGET_DATASET_DIR):
-        shutil.rmtree(TARGET_DATASET_DIR)
-    os.makedirs(TARGET_DATASET_DIR)
-    
     list_image_path = glob.glob(SOURCE_DATASET_DIR + "/*." + IMAGE_FORMAT)[:4]
     print("Total images: {}".format(len(list_image_path)))
     
@@ -38,7 +34,7 @@ def prepare_dataset():
 def split_image(image_path):
     image = cv2.imread(image_path, cv2.IMREAD_UNCHANGED)
     image_height, image_width = image.shape[:2]
-    
+
     index = 1
     if image_height >= IMAGE_SIZE and image_width >= IMAGE_SIZE:
         for y in range(0, image_height - IMAGE_SIZE + 1, STEP_SIZE):
