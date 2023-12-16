@@ -12,12 +12,12 @@ from tqdm import tqdm
 IMAGE_FORMAT = 'png'
 IMAGE_SIZE = 300
 STEP_SIZE = 150
-SOURCE_DATASET_DIR = "/home/graduation_thesis/dataset_raw/DIV2K_train_HR"
-TARGET_DATASET_DIR = "/home/graduation_thesis/dataset_small/train"
+SOURCE_DATASET_DIR = "../data/dataset_raw/DIV2K_train_HR"
+TARGET_DATASET_DIR = "../data/dataset_small/train"
 
 
 def prepare_dataset():
-    list_image_path = glob.glob(SOURCE_DATASET_DIR + "/*." + IMAGE_FORMAT)[:4]
+    list_image_path = glob.glob(SOURCE_DATASET_DIR + "/*." + IMAGE_FORMAT)
     print("Total images: {}".format(len(list_image_path)))
     
     progress_bar = tqdm(total=len(list_image_path), unit="image", desc="Prepare split image")

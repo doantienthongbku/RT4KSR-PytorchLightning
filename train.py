@@ -28,7 +28,7 @@ def main():
         monitor="val_loss",
         mode="min",
         dirpath=config.checkpoint_root,
-        filename="RT4KSRRepXL-{epoch:02d}-{val_loss:.4f}-{val_psnr:.4f}",
+        filename="RT4KSR_Rep-{epoch:02d}-{val_loss:.4f}-{val_psnr:.4f}",
         save_last=True,
     )
     lr_monitor = LearningRateMonitor(logging_interval=config.lr_monitor_logging_interval)
@@ -48,7 +48,12 @@ def main():
         callbacks=[checkpoint_callback, lr_monitor, early_stopping],
     )
     
-    trainer.fit(model, dm)
+    # training    
+    if config.continue_training:
+        trainer.fit(model, dm, ckpt_path=config.checkpoint_path_continue)
+    else:
+        trainer.fit(model, dm)
+
     trainer.validate(model, dm)
 
 if __name__ == "__main__":

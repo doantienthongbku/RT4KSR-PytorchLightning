@@ -24,18 +24,21 @@ def main():
         config=config,
         map_location=device
     )
-    if config.infer_reparameterize:
+    if config.infer_reparameterize: # reparameterize model
         litmodel.model = reparameterize(config, litmodel.model, device, save_rep_checkpoint=False)
     litmodel.model.to(device)
     litmodel.eval()
     
+    # Convert image to tensor and move to device
     image_name = os.path.basename(lr_image_path)
     lr_image = Image.open(lr_image_path).convert("RGB")
     lr_sample = TF.to_tensor(np.array(lr_image) / 255.0).unsqueeze(0).float().to(device)
     
+    # Inference
     with torch.no_grad():
         sr_sample = litmodel.predict_step(lr_sample)
 
+    # Convert tensor to image and save
     sr_sample = tensor2uint(sr_sample * 255.0)
     image_sr_PIL = Image.fromarray(sr_sample)
     
@@ -43,7 +46,7 @@ def main():
         os.makedirs(save_path)
     image_sr_PIL.save(os.path.join(save_path, image_name))
     
-    print("Inference done.")
+    print("Inference done. Image saved to: {}".format(os.path.join(save_path, image_name)))
     
 if __name__ == "__main__":
     main()

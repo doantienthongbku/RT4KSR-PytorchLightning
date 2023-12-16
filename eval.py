@@ -1,13 +1,12 @@
 import os
 import glob
 import pytorch_lightning as pl
+from sympy import li
 import torch
 from torchvision.transforms import functional as TF
 from PIL import Image
 import numpy as np
 from tqdm import tqdm
-from torchsummary import summary
-from torchmetrics.image import PeakSignalNoiseRatio, StructuralSimilarityIndexMeasure
 
 from utils import reparameterize
 from model import LitRT4KSR_Rep, rt4ksr_rep
@@ -29,7 +28,7 @@ def main():
         config=config,
         map_location=device
     )
-    if config.eval_reparameterize:
+    if config.eval_reparameterize:  # reparameterize model
         litmodel.model = reparameterize(config, litmodel.model, device, save_rep_checkpoint=False)
     litmodel.model.to(device)
     litmodel.eval()
@@ -38,10 +37,13 @@ def main():
     list_hr_image_path = glob.glob(os.path.join(hr_image_dir, "*.png"))
     
     psnr_RGB_lst, ssim_RGB_lst, psnr_Y_lst, ssim_Y_lst = [], [], [], []
-    
-    for lr_image_path, hr_image_path in tqdm(zip(list_lr_image_path, list_hr_image_path)):
+
+    # Evaluation
+    list_pair_lr_hr_image_path = list(zip(list_lr_image_path, list_hr_image_path))
+    for lr_image_path, hr_image_path in tqdm(list_pair_lr_hr_image_path, desc="Eval"):
         image_name = os.path.basename(lr_image_path)
 
+        # Convert image to tensor and move to device
         lr_image = Image.open(lr_image_path).convert("RGB")
         hr_image = Image.open(hr_image_path).convert("RGB")
         lr_sample = TF.to_tensor(np.array(lr_image) / 255.0).unsqueeze(0).float().to(device)
@@ -53,14 +55,11 @@ def main():
         sr_sample = tensor2uint(sr_sample * 255.0)
         hr_sample = tensor2uint(hr_sample * 255.0)
         
-        psnr_RGB = calculate_psnr(sr_sample, hr_sample, crop_border=0, test_y_channel=False)
-        ssim_RGB = calculate_ssim(sr_sample, hr_sample, crop_border=0, test_y_channel=False)
-        psnr_Y = calculate_psnr(sr_sample, hr_sample, crop_border=0, test_y_channel=True)
-        ssim_Y = calculate_ssim(sr_sample, hr_sample, crop_border=0, test_y_channel=True)
-        psnr_RGB_lst.append(psnr_RGB)
-        ssim_RGB_lst.append(ssim_RGB)
-        psnr_Y_lst.append(psnr_Y)
-        ssim_Y_lst.append(ssim_Y)
+        # Calculate PSNR and SSIM
+        psnr_RGB_lst.append(calculate_psnr(sr_sample, hr_sample, crop_border=0, test_y_channel=False))
+        ssim_RGB_lst.append(calculate_ssim(sr_sample, hr_sample, crop_border=0, test_y_channel=False))
+        psnr_Y_lst.append(calculate_psnr(sr_sample, hr_sample, crop_border=0, test_y_channel=True))
+        ssim_Y_lst.append(calculate_ssim(sr_sample, hr_sample, crop_border=0, test_y_channel=True))
 
         # save image
         image_sr_PIL = Image.fromarray(sr_sample)
@@ -68,6 +67,7 @@ def main():
             os.makedirs(save_path)
         image_sr_PIL.save(os.path.join(save_path, image_name))
         
+    # Show results
     print("Average PSNR (RGB):", sum(psnr_RGB_lst) / len(psnr_RGB_lst))
     print("Average PSNR (Y)  :", sum(psnr_Y_lst) / len(psnr_Y_lst))
     print("Average SSIM (RGB):", sum(ssim_RGB_lst) / len(ssim_RGB_lst))
