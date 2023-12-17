@@ -43,11 +43,11 @@ The visual comparison of the reproduced RT4KSR (ours) with the original RT4KSR a
 
 | LR</br>(low resolution) | RT4KSR</br>(original) | RT4KSR</br>(ours) | HR</br>(high resolution) |
 |:---:|:---:|:---:|:---:|
-| <img src="docs/lr/baby.png" height="128" width="128"/> | <img src="docs/sr_base/baby.png" height="128" width="128"/> | <img src="docs/sr_our/baby.png" height="128" width="128"/> | <img src="docs/hr/baby.png" height="128" width="128"/> |
-| <img src="docs/lr/bird.png" height="128" width="128"/> | <img src="docs/sr_base/bird.png" height="128" width="128"/> | <img src="docs/sr_our/bird.png" height="128" width="128"/> | <img src="docs/hr/bird.png" height="128" width="128"/> |
-| <img src="docs/lr/butterfly.png" height="128" width="128"/> | <img src="docs/sr_base/butterfly.png" height="128" width="128"/> | <img src="docs/sr_our/butterfly.png" height="128" width="128"/> | <img src="docs/hr/butterfly.png" height="128" width="128"/> |
-| <img src="docs/lr/head.png" height="128" width="128"/> | <img src="docs/sr_base/head.png" height="128" width="128"/> | <img src="docs/sr_our/head.png" height="128" width="128"/> | <img src="docs/hr/head.png" height="128" width="128"/> |
-| <img src="docs/lr/woman.png" height="180" width="128"/> | <img src="docs/sr_base/woman.png" height="180" width="128"/> | <img src="docs/sr_our/woman.png" height="180" width="128"/> | <img src="docs/hr/woman.png" height="180" width="128"/> |
+| <img src="docs/lr/baby.png" height="256" width="256"/> | <img src="docs/sr_base/baby.png" height="256" width="256"/> | <img src="docs/sr_our/baby.png" height="256" width="256"/> | <img src="docs/hr/baby.png" height="256" width="256"/> |
+| <img src="docs/lr/bird.png" height="256" width="256"/> | <img src="docs/sr_base/bird.png" height="256" width="256"/> | <img src="docs/sr_our/bird.png" height="256" width="256"/> | <img src="docs/hr/bird.png" height="256" width="256"/> |
+| <img src="docs/lr/butterfly.png" height="256" width="256"/> | <img src="docs/sr_base/butterfly.png" height="256" width="256"/> | <img src="docs/sr_our/butterfly.png" height="256" width="256"/> | <img src="docs/hr/butterfly.png" height="256" width="256"/> |
+| <img src="docs/lr/head.png" height="256" width="256"/> | <img src="docs/sr_base/head.png" height="256" width="256"/> | <img src="docs/sr_our/head.png" height="256" width="256"/> | <img src="docs/hr/head.png" height="256" width="256"/> |
+| <img src="docs/lr/woman.png" height="360" width="256"/> | <img src="docs/sr_base/woman.png" height="360" width="256"/> | <img src="docs/sr_our/woman.png" height="360" width="256"/> | <img src="docs/hr/woman.png" height="360" width="256"/> |
 
 
 ## Contribution
