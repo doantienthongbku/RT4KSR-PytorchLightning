@@ -51,9 +51,9 @@ checkpoint_path_continue = "checkpoints/last.ckpt"
 # Eval configuration:
 eval_reparameterize = True
 checkpoint_path_eval = "checkpoints/best.ckpt"
-eval_lr_image_dir = "../data/dataset_val/Set14/LRbicx2"
-eval_hr_image_dir = "../data/dataset_val/Set14/GTmod12"
-val_save_path = "results/val/Set14"
+eval_lr_image_dir = "../data/dataset_val/Set5/LRbicx2"
+eval_hr_image_dir = "../data/dataset_val/Set5/GTmod12"
+val_save_path = "results/val/Set5"
 
 # Inference configuration:
 infer_reparameterize = True
