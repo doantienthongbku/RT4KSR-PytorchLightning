@@ -22,7 +22,7 @@ In the training dataset, to increase the number of images, we crop the original 
 
 ## Training Strategy
 
-**Reproduce strategy:** Applying the same strategy with the paper, we extract random crops of size 256×256 from the RGB training set and further augment the crops by random rotation (0◦,90◦,180◦,270◦), random horizontal and random vertical flipping. LR images are generated online using bicubic downsampling of the original HR images. We evaluate the generated validation dataset consisting of 100 images from DIV2K. 
+**Reproduce strategy:** Applying the same strategy with the paper, we extract random crops of size 180×256 from the RGB training set and further augment the crops by random rotation (0◦,90◦,180◦,270◦), random horizontal and random vertical flipping. LR images are generated online using bicubic downsampling of the original HR images. We evaluate the generated validation dataset consisting of 100 images from DIV2K. 
 
 **Hyperparameters:** In the original paper, the author used ADAM optimizer, but in this reproduced version, instead of using ADAM optimizer, we use ADAMW optimizer with β1 = 0.9,β2 = 0.999 to minimize the L1 loss between the SR output and HR target for 100 epochs with the batch size set to 64 and an initial learning rate of 1e − 3, along with a step scheduler with step size 20 epochs and decay factor 0.5. By applying some small improvements we achieved slight improvement compared to the baseline on 4 common validation datasets.
 
@@ -43,11 +43,11 @@ The visual comparison of the reproduced RT4KSR (ours) with the original RT4KSR a
 
 | LR</br>(low resolution) | RT4KSR</br>(original) | RT4KSR</br>(ours) | HR</br>(high resolution) |
 |:---:|:---:|:---:|:---:|
-| <img src="docs/lr/baby.png" height="256" width="256"/> | <img src="docs/sr_base/baby.png" height="256" width="256"/> | <img src="docs/sr_our/baby.png" height="256" width="256"/> | <img src="docs/hr/baby.png" height="256" width="256"/> |
-| <img src="docs/lr/bird.png" height="256" width="256"/> | <img src="docs/sr_base/bird.png" height="256" width="256"/> | <img src="docs/sr_our/bird.png" height="256" width="256"/> | <img src="docs/hr/bird.png" height="256" width="256"/> |
-| <img src="docs/lr/butterfly.png" height="256" width="256"/> | <img src="docs/sr_base/butterfly.png" height="256" width="256"/> | <img src="docs/sr_our/butterfly.png" height="256" width="256"/> | <img src="docs/hr/butterfly.png" height="256" width="256"/> |
-| <img src="docs/lr/head.png" height="256" width="256"/> | <img src="docs/sr_base/head.png" height="256" width="256"/> | <img src="docs/sr_our/head.png" height="256" width="256"/> | <img src="docs/hr/head.png" height="256" width="256"/> |
-| <img src="docs/lr/woman.png" height="360" width="256"/> | <img src="docs/sr_base/woman.png" height="360" width="256"/> | <img src="docs/sr_our/woman.png" height="360" width="256"/> | <img src="docs/hr/woman.png" height="360" width="256"/> |
+| <img src="docs/lr/baby.png" height="180" width="180"/> | <img src="docs/sr_base/baby.png" height="180" width="180"/> | <img src="docs/sr_our/baby.png" height="180" width="180"/> | <img src="docs/hr/baby.png" height="180" width="180"/> |
+| <img src="docs/lr/bird.png" height="180" width="180"/> | <img src="docs/sr_base/bird.png" height="180" width="180"/> | <img src="docs/sr_our/bird.png" height="180" width="180"/> | <img src="docs/hr/bird.png" height="180" width="180"/> |
+| <img src="docs/lr/butterfly.png" height="180" width="180"/> | <img src="docs/sr_base/butterfly.png" height="180" width="180"/> | <img src="docs/sr_our/butterfly.png" height="180" width="180"/> | <img src="docs/hr/butterfly.png" height="180" width="180"/> |
+| <img src="docs/lr/head.png" height="180" width="180"/> | <img src="docs/sr_base/head.png" height="180" width="180"/> | <img src="docs/sr_our/head.png" height="180" width="180"/> | <img src="docs/hr/head.png" height="180" width="180"/> |
+| <img src="docs/lr/woman.png" height="280" width="180"/> | <img src="docs/sr_base/woman.png" height="280" width="180"/> | <img src="docs/sr_our/woman.png" height="280" width="180"/> | <img src="docs/hr/woman.png" height="280" width="180"/> |
 
 
 ## Contribution
